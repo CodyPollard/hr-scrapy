@@ -7,12 +7,11 @@ class TeamsSpider(scrapy.Spider):
 
     def start_requests(self):
         urls = []
-        # team_names = [
-        #     'ANA', 'ARI', 'BOS', 'BUF', 'CAR', 'CGY', 'CHI', 'CBJ', 'COL', 'DAL', 'DET',
-        #     'EDM', 'FLA', 'LAK', 'MIN', 'MTL', 'NSH', 'NJD', 'NYI', 'NYR', 'OTT',
-        #     'PHI', 'PIT', 'SJS', 'STL', 'TBL', 'TOR', 'VAN', 'VGK', 'WPG', 'WSH',
-        # ]
-        team_names = ['ANA', ]
+        team_names = [
+            'ANA', 'ARI', 'BOS', 'BUF', 'CAR', 'CGY', 'CHI', 'CBJ', 'COL', 'DAL', 'DET',
+            'EDM', 'FLA', 'LAK', 'MIN', 'MTL', 'NSH', 'NJD', 'NYI', 'NYR', 'OTT',
+            'PHI', 'PIT', 'SJS', 'STL', 'TBL', 'TOR', 'VAN', 'VGK', 'WPG', 'WSH',
+        ]
         for t in team_names:
             urls.append('https://www.hockey-reference.com/teams/%s/2019.html' % t)
         for url in urls:
