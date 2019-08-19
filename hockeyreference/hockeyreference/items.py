@@ -40,3 +40,8 @@ class Team(scrapy.Item):
     name = scrapy.Field()
     # Have list of skaters under team?
     # players = Skater()
+
+
+class GamedayRoster(scrapy.Item):
+    skater_list = scrapy.Field()
+    game_date = scrapy.Field()
