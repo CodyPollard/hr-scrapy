@@ -35,7 +35,8 @@ class TeamsSpider(scrapy.Spider):
         skater_table = response.css("table#ANA_skaters>tbody")
         for row in skater_table.xpath("tr"):
             # Append skater to skater_list for yield later
-            skater_list.append(row.xpath("td[1]//text()").get())
+            if row.xpath("td[1]//text()").get() is not None:
+                skater_list.append(row.xpath("td[1]//text()").get())
         roster['skater_list'] = skater_list
 
         yield roster
