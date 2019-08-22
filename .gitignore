@@ -1,5 +1,7 @@
 .idea/
 *.pyc
+*.json
+*.jl
 
 
 # Byte-compiled / optimized / DLL files
