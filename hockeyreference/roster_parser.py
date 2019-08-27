@@ -30,7 +30,25 @@ class Player(object):
             f.close()
 
     def missed_streaks(self):
-        pass
+        self.get_game_breakdown()
+        streak_count = 0
+        streak_max = 0
+        with open_data('output/18-19_schedule.json') as f:
+            data = json.load(f)
+            for line in data:
+                # print('Looping Data')
+                # print(line.split('#')[-1])
+                for i in self.games_missed:
+                    # print('Looping games_missed')
+                    # print(i)
+                    if line.split('#')[-1] in i:
+                        print('Matched date: %s' % i)
+                # if line is self.games_missed[i]:
+                #     streak_count += 1
+                #     print(streak_count)
+                # else:
+                #     streak_count = 0
+        print(self.games_missed)
 
     def export_player(self):
         """Runs all functions above and exports player to individual JSON files"""
@@ -108,7 +126,6 @@ def convert_game_dates():
             numbered_games.append('{}#{}'.format(i+1, game['game_date']))
         f.close()
     to_json('output/18-19_schedule.json', numbered_games)
-    print(numbered_games)
 
 
 def to_json(file, data):
@@ -116,9 +133,17 @@ def to_json(file, data):
         json.dump(data, rs, indent=4)
 
 
+def fix_dates():
+    with open_data('output/ducks_18-19_skaters.json') as f:
+        data = json.load(f)
+        for x in data:
+            print(x['gamedate'])
+
+
 if __name__ == '__main__':
     # parse_raw()
     # # count_players()
-    # Player('Hampus Lindholm')
-    convert_game_dates()
+    Player('Hampus Lindholm').missed_streaks()
+    # convert_game_dates()
     # export_all_players()
+    # fix_dates()
