@@ -16,6 +16,7 @@ class Player(object):
         self.name = name
         self.games_missed = []
         self.games_played = []
+        self.injury_streaks = []
 
     def get_game_breakdown(self):
         """Returns list of all games a player missed in a given season"""
@@ -29,31 +30,35 @@ class Player(object):
                     self.games_played.append(game['gamedate'])
             f.close()
 
-    def missed_streaks(self):
+    def get_missed_streaks(self):
         self.get_game_breakdown()
         streak_count = 0
-        streak_max = 0
-        with open_data('output/18-19_schedule.json') as f:
+        streak_list = []
+        streak_start = ''
+        with open_data('output/ducks_18-19_skaters.json') as f:
             data = json.load(f)
-            for line in data:
-                # print('Looping Data')
-                # print(line.split('#')[-1])
-                for i in self.games_missed:
-                    # print('Looping games_missed')
-                    # print(i)
-                    if line.split('#')[-1] in i:
-                        print('Matched date: %s' % i)
-                # if line is self.games_missed[i]:
-                #     streak_count += 1
-                #     print(streak_count)
-                # else:
-                #     streak_count = 0
-        print(self.games_missed)
+            # Check gamedate against player's games. Increment streak if missed games are found in a row.
+            for game in data:
+                if game['gamedate'] in self.games_missed:
+                    if streak_count is 0:
+                        streak_start = game['gamedate'].split(',')[0]
+                    streak_count += 1
+                elif game['gamedate'] in self.games_played:
+                    # Set streak max and reset count if gamedate isn't found in games_missed
+                    if streak_count > 1:
+                        streak_list.append('{}: {}'.format(streak_start, streak_count))
+                    streak_count = 0
+            # Check if ended season injured
+            if streak_count > 1:
+                streak_list.append('{}: {}'.format(streak_start, streak_count))
+        self.injury_streaks = streak_list
+        return streak_list
 
     def export_player(self):
         """Runs all functions above and exports player to individual JSON files"""
         # Pulling data
         self.get_game_breakdown()
+        self.get_missed_streaks()
         # Exporting
         file_name = '18-19-%s' % self.name.replace(' ', '-').lower()
         with open('output/individual/%s.json' % file_name, 'w') as f:
@@ -113,12 +118,6 @@ def get_all_players():
     return all_players
 
 
-def export_all_players():
-    all_players = get_all_players()
-    for player in all_players:
-        Player(player).export_player()
-
-
 def convert_game_dates():
     numbered_games = []
     with open_data('gamelinks_ducks.jl') as f:
@@ -140,10 +139,24 @@ def fix_dates():
             print(x['gamedate'])
 
 
+# ALL PLAYERS #
+def export_all_players():
+    all_players = get_all_players()
+    for player in all_players:
+        Player(player).export_player()
+
+
+def streak_count_all_players():
+    all_players = get_all_players()
+    for player in all_players:
+        print('{}: {}'.format(player, Player(player).get_missed_streaks()))
+
+
 if __name__ == '__main__':
     # parse_raw()
     # # count_players()
-    Player('Hampus Lindholm').missed_streaks()
+    # Player('Hampus Lindholm').missed_streaks()
     # convert_game_dates()
     # export_all_players()
     # fix_dates()
+    streak_count_all_players()
